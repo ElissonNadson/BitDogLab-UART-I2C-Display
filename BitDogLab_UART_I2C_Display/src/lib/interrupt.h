@@ -3,6 +3,7 @@
 
 #include "pico/stdlib.h"
 
-void gpio_irq_handler(uint gpio, uint32_t events);
+// Manipulador de interrupção GPIO
+void manipulador_irq_gpio(uint gpio, uint32_t eventos);
 
 #endif

@@ -3,30 +3,30 @@
 #include "pico/time.h"
 #include "interrupt.h"
 
-// inicializa um botão (sem interrupção)
-void init_button(uint8_t buttonGPIO) {
-    gpio_init(buttonGPIO);
-    gpio_set_dir(buttonGPIO, GPIO_IN);
-    gpio_pull_up(buttonGPIO);
+// Inicializa um botão (sem interrupção)
+void inicializar_botao(uint8_t botaoGPIO) {
+    gpio_init(botaoGPIO);
+    gpio_set_dir(botaoGPIO, GPIO_IN);
+    gpio_pull_up(botaoGPIO);
 }
 
-// inicializa um botão (com interrupção)
-void init_button_with_interrupt(uint buttonGPIO, uint32_t event, bool enabled) {
-    init_button(buttonGPIO);
-    gpio_set_irq_enabled_with_callback(buttonGPIO, event, true, &gpio_irq_handler);
+// Inicializa um botão (com interrupção)
+void inicializar_botao_com_interrupcao(uint botaoGPIO, uint32_t evento, bool habilitado) {
+    inicializar_botao(botaoGPIO);
+    gpio_set_irq_enabled_with_callback(botaoGPIO, evento, habilitado, &manipulador_irq_gpio);
 }
 
-// verifica se o botão foi pressionado
-bool is_button_pressed(uint8_t buttonGPIO) {
-    return !gpio_get(buttonGPIO);
+// Verifica se o botão foi pressionado
+bool botao_pressionado(uint8_t botaoGPIO) {
+    return !gpio_get(botaoGPIO);
 }
 
-// tratamento de debouncing do botão
+// Tratamento de debouncing do botão
 bool debouncing(uint32_t ms){
-    static uint32_t last_time = 0;
-    uint32_t current_time = to_ms_since_boot(get_absolute_time());
-    if (current_time - last_time < ms)
+    static uint32_t ultimo_tempo = 0;
+    uint32_t tempo_atual = to_ms_since_boot(get_absolute_time());
+    if (tempo_atual - ultimo_tempo < ms)
         return false;
-    last_time = current_time;
+    ultimo_tempo = tempo_atual;
     return true;
 }

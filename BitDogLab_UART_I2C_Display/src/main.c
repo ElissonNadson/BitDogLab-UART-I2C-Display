@@ -1,3 +1,4 @@
+// *********************** Includes *******************************
 #include <stdio.h>
 #include <stdlib.h>
 #include "pico/stdlib.h"
@@ -8,7 +9,6 @@
 #include "pico/bootrom.h"
 
 // ************************* LIBS ******************************
-
 #include "lib/matrix.h"
 #include "lib/button.h"
 #include "lib/led.h"
@@ -29,8 +29,9 @@
 #define I2C_SCL 15
 #define endereco 0x3C
 
+// *********************** Main  *******************************
 int main() {
-    // habilita o uso da comunicação UART
+    // Habilita o uso da comunicação UART
     stdio_init_all();
 
     // Configuração da UART
@@ -38,12 +39,12 @@ int main() {
     gpio_set_function(UART_TX, GPIO_FUNC_UART);
     gpio_set_function(UART_RX, GPIO_FUNC_UART);
 
-    // I2C Initialisation. Using it at 400Khz.
+    // Inicialização da I2C. Usando a 400Khz.
     i2c_init(I2C_PORT, 400 * 1000);
-    gpio_set_function(I2C_SDA, GPIO_FUNC_I2C); // Set the GPIO pin function to I2C
-    gpio_set_function(I2C_SCL, GPIO_FUNC_I2C); // Set the GPIO pin function to I2C
-    gpio_pull_up(I2C_SDA); // Pull up the data line
-    gpio_pull_up(I2C_SCL); // Pull up the clock line
+    gpio_set_function(I2C_SDA, GPIO_FUNC_I2C); // Define a função do pino GPIO para I2C
+    gpio_set_function(I2C_SCL, GPIO_FUNC_I2C); // Define a função do pino GPIO para I2C
+    gpio_pull_up(I2C_SDA); // Puxa a linha de dados para cima
+    gpio_pull_up(I2C_SCL); // Puxa a linha de clock para cima
     ssd1306_init(&ssd, WIDTH, HEIGHT, false, endereco, I2C_PORT); // Inicializa o display
     ssd1306_config(&ssd); // Configura o display
     ssd1306_send_data(&ssd); // Envia os dados para o display
@@ -52,41 +53,36 @@ int main() {
     ssd1306_fill(&ssd, false);
     ssd1306_send_data(&ssd);
 
-    
-    // Inicializa os LEDS
-    init_led(LED_GREEN);
-    init_led(LED_BLUE);
-    // Inicialização do botões e configuração de eventos de interrupção
-    init_button_with_interrupt(BUTTON_A, GPIO_IRQ_EDGE_FALL, true);
-    init_button_with_interrupt(BUTTON_B, GPIO_IRQ_EDGE_FALL, true);
-    // Remover a inicialização do JOYSTICK_BUTTON
-    // init_button_with_interrupt(JOYSTICK_BUTTON, GPIO_IRQ_EDGE_FALL, true);
+    // Inicializa os LEDs
+    inicializar_led(LED_VERDE);
+    inicializar_led(LED_AZUL);
+    // Inicialização dos botões e configuração de eventos de interrupção
+    inicializar_botao_com_interrupcao(BUTTON_A, GPIO_IRQ_EDGE_FALL, true);
+    inicializar_botao_com_interrupcao(BUTTON_B, GPIO_IRQ_EDGE_FALL, true);
 
-    // Configuração da matriz de LEDS
+    // Configuração da matriz de LEDs
     PIO pio = pio0;
     int sm = 0;
     uint offset = pio_add_program(pio, &ws2812_program);
     ws2812_program_init(pio, sm, offset, WS2812_PIN, 800000, IS_RGBW);
 
-
     // Aguarda pressionar Enter para exibir o menu pela primeira vez
     getchar();
     char input;
-    // rotina principal
+    // Rotina principal
     while(true) {
-
-        // so vai entrar nessa rotina se a USB estiver conectada
+        // Só vai entrar nessa rotina se a USB estiver conectada
         if(stdio_usb_connected()) {
-            main_menu();
+            menu_principal();
             puts("");
             while(true) {
                 printf("Escolha uma opcao: ");
                 scanf("%c", &input);
-                // encerra o loop se pressionar
-                    // um caractere entre 0 e 9
-                    // um caractere entre A-Z
-                    // um caractere entre a-z
-                    // /: para finalizar o programa
+                // Encerra o loop se pressionar
+                // um caractere entre 0 e 9
+                // um caractere entre A-Z
+                // um caractere entre a-z
+                // /: para finalizar o programa
                 if((input>= '0' && input <= '9')
                     || (input >= 'A' && input <= 'Z')
                     || (input >= 'a' && input <= 'z')
@@ -99,7 +95,7 @@ int main() {
             (input >= 'a' && input <= 'z') || 
             (input>= '0' && input <= '9')) {
                 char input_string[20];
-                // limpa o display
+                // Limpa o display
                 ssd1306_fill(&ssd, false);
                 ssd1306_send_data(&ssd);
                 ssd1306_draw_string(&ssd, "caractere", 10, 20);
@@ -111,81 +107,81 @@ int main() {
                 printf("\nCaractere digitado: %c\n", input);
             switch (input) {
                 case '0':
-                    if(actual_number != 0) {
-                        actual_number = 0;
-                        set_one_led(numbers[actual_number], led_r, led_g, led_b);
+                    if(numero_atual != 0) {
+                        numero_atual = 0;
+                        definir_um_led(numeros[numero_atual], led_r, led_g, led_b);
                     }
-                    printf("\nExibindo o numero %d na matriz\n", actual_number);
+                    printf("\nExibindo o numero %d na matriz\n", numero_atual);
                     break;
                 case '1':
-                    if(actual_number != 1) {
-                        actual_number = 1;
-                        set_one_led(numbers[actual_number], led_r, led_g, led_b);
+                    if(numero_atual != 1) {
+                        numero_atual = 1;
+                        definir_um_led(numeros[numero_atual], led_r, led_g, led_b);
                     }
-                    printf("\nExibindo o numero %d na matriz\n", actual_number);
+                    printf("\nExibindo o numero %d na matriz\n", numero_atual);
                     break;
                 case '2':
-                    if(actual_number != 2) {
-                        actual_number = 2;
-                        set_one_led(numbers[actual_number], led_r, led_g, led_b);
+                    if(numero_atual != 2) {
+                        numero_atual = 2;
+                        definir_um_led(numeros[numero_atual], led_r, led_g, led_b);
                     }
-                    printf("\nExibindo o numero %d na matriz\n", actual_number);
+                    printf("\nExibindo o numero %d na matriz\n", numero_atual);
                     break;
                 case '3':
-                    if(actual_number != 3) {
-                        actual_number = 3;
-                        set_one_led(numbers[actual_number], led_r, led_g, led_b);
+                    if(numero_atual != 3) {
+                        numero_atual = 3;
+                        definir_um_led(numeros[numero_atual], led_r, led_g, led_b);
                     }
-                    printf("\nExibindo o numero %d na matriz\n", actual_number);
+                    printf("\nExibindo o numero %d na matriz\n", numero_atual);
                     break;
                 case '4':
-                    if(actual_number != 4) {
-                        actual_number = 4;
-                        set_one_led(numbers[actual_number], led_r, led_g, led_b);
+                    if(numero_atual != 4) {
+                        numero_atual = 4;
+                        definir_um_led(numeros[numero_atual], led_r, led_g, led_b);
                     }
-                    printf("\nExibindo o numero %d na matriz\n", actual_number);
+                    printf("\nExibindo o numero %d na matriz\n", numero_atual);
                     break;
                 case '5':
-                    if(actual_number != 5) {
-                        actual_number = 5;
-                        set_one_led(numbers[actual_number], led_r, led_g, led_b);
+                    if(numero_atual != 5) {
+                        numero_atual = 5;
+                        definir_um_led(numeros[numero_atual], led_r, led_g, led_b);
                     }
-                    printf("\nExibindo o numero %d na matriz\n", actual_number);
+                    printf("\nExibindo o numero %d na matriz\n", numero_atual);
                     break;   
                 case '6':
-                    if(actual_number != 6) {
-                        actual_number = 6;
-                        set_one_led(numbers[actual_number], led_r, led_g, led_b);
+                    if(numero_atual != 6) {
+                        numero_atual = 6;
+                        definir_um_led(numeros[numero_atual], led_r, led_g, led_b);
                     }
-                    printf("\nExibindo o numero %d na matriz\n", actual_number);
+                    printf("\nExibindo o numero %d na matriz\n", numero_atual);
                     break;  
                 case '7':
-                    if(actual_number != 7) {
-                        actual_number = 7;
-                        set_one_led(numbers[actual_number], led_r, led_g, led_b);
+                    if(numero_atual != 7) {
+                        numero_atual = 7;
+                        definir_um_led(numeros[numero_atual], led_r, led_g, led_b);
                     }
-                    printf("\nExibindo o numero %d na matriz\n", actual_number);
+                    printf("\nExibindo o numero %d na matriz\n", numero_atual);
                     break; 
                 case '8':
-                    if(actual_number != 8) {
-                        actual_number = 8;
-                        set_one_led(numbers[actual_number], led_r, led_g, led_b);
+                    if(numero_atual != 8) {
+                        numero_atual = 8;
+                        definir_um_led(numeros[numero_atual], led_r, led_g, led_b);
                     }
-                    printf("\nExibindo o numero %d na matriz\n", actual_number);
+                    printf("\nExibindo o numero %d na matriz\n", numero_atual);
                     break; 
                 case '9':
-                    if(actual_number != 9) {
-                        actual_number = 9;
-                        set_one_led(numbers[actual_number], led_r, led_g, led_b);
+                    if(numero_atual != 9) {
+                        numero_atual = 9;
+                        definir_um_led(numeros[numero_atual], led_r, led_g, led_b);
                     }
-                    printf("\nExibindo o numero %d na matriz\n", actual_number);
+                    printf("\nExibindo o numero %d na matriz\n", numero_atual);
                     break;   
                 // ESCAPE para finalizar o programa
-                case '/':
-                    // posição da matriz de reset
-                    actual_number = 10;
-                    // desliga os leds da matriz
-                    set_one_led(numbers[actual_number], led_r, led_g, led_b);
+                case '*':
+                    // Posição da matriz de reset
+                    numero_atual = 10;
+                    // Desliga os LEDs da matriz
+                    definir_um_led(numeros[numero_atual], led_r, led_g, led_b);
                     // Entra no modo BOOTSELL e encerra o programa
                     reset_usb_boot(0,0);
                     printf("\nFinalizando o programa...\n");
@@ -194,7 +190,7 @@ int main() {
                     break;
             }
         }
-        // para evitar que o loop seja executado muito rapidamente
+        // Para evitar que o loop seja executado muito rapidamente
         sleep_ms(100);
     }
 }
