@@ -39,6 +39,9 @@
     "files.associations": {
         "stdio.h": "c",
         "numeros.h": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "button.h": "c",
+        "matrix.h": "c",
+        "stdlib.h": "c"
     }
 }

@@ -1,10 +1,4 @@
-cmake_minimum_required(VERSION 3.13)
-
-set(CMAKE_C_STANDARD 11)
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-# Initialise pico_sdk from installed location
+# == DO NOT EDIT THE FOLLOWING LINES for the Raspberry Pi Pico VS Code Extension to work ==
 if(WIN32)
     set(USERHOME $ENV{USERPROFILE})
 else()
@@ -17,31 +11,44 @@ set(picoVscode ${USERHOME}/.pico-sdk/cmake/pico-vscode.cmake)
 if (EXISTS ${picoVscode})
     include(${picoVscode})
 endif()
+# ====================================================================================
+
+
+
+cmake_minimum_required(VERSION 3.13)
+
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(PICO_BOARD pico_w CACHE STRING "Board type")
-
-# Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
-
 project(BitDogLab_UART_I2C_Display C CXX ASM)
-
-# Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
+
 # Add executable. Default name is the project name, version 0.1
+# Inclui todos os arquivos .c da pasta src
 file(GLOB SOURCES "src/*.c")
-file(GLOB LIB_SOURCES "Lib/*.c")
-add_executable(BitDogLab_UART_I2C_Display main.c ${SOURCES} ${LIB_SOURCES})
+# Inclui todos os arquivos .c da pasta src/lib
+file(GLOB LIB_SOURCES "src/lib/*.c")
+# Combina todos os arquivos em um único executável
+add_executable(BitDogLab_UART_I2C_Display ${SOURCES} ${LIB_SOURCES}
+    src/main.c
+    src/Inc/ws2812.pio
+    src/Inc/ssd1306.c
+    src/Inc/ssd1306.h
+    src/Inc/ws2812.pio.h
+    # ...adicione outros arquivos necessários aqui...
+)
 
-pico_set_program_name(BitDogLab_UART_I2C_Display "BitDogLab_UART_I2C_Display")
-pico_set_program_version(BitDogLab_UART_I2C_Display "0.1")
+# Para permitir depuração
+pico_enable_stdio_uart(BitDogLab_UART_I2C_Display 1)  # Habilita UART
+pico_enable_stdio_usb(BitDogLab_UART_I2C_Display 1)   # Habilita USB
 
-# Modify the below lines to enable/disable output over UART/USB
-pico_enable_stdio_uart(BitDogLab_UART_I2C_Display 1)
-pico_enable_stdio_usb(BitDogLab_UART_I2C_Display 1)
-
-# Add the standard library to the build
-target_link_libraries(BitDogLab_UART_I2C_Display 
+# gera o arquivo .pio.h
+pico_generate_pio_header(BitDogLab_UART_I2C_Display ${CMAKE_CURRENT_LIST_DIR}/src/Inc/ws2812.pio OUTPUT_DIR ${CMAKE_CURRENT_LIST_DIR}/src/Inc)
+target_link_libraries(BitDogLab_UART_I2C_Display PRIVATE 
     pico_stdlib
     pico_time
     hardware_pio
@@ -49,15 +56,7 @@ target_link_libraries(BitDogLab_UART_I2C_Display
     hardware_uart
     hardware_i2c
 )
-
-# Add the standard include files to the build
-target_include_directories(BitDogLab_UART_I2C_Display PRIVATE
-    ${CMAKE_CURRENT_LIST_DIR}
-    ${CMAKE_CURRENT_LIST_DIR}/src
-    ${CMAKE_CURRENT_LIST_DIR}/Lib
-)
-
-# Generate .pio header if needed
-pico_generate_pio_header(BitDogLab_UART_I2C_Display ${CMAKE_CURRENT_LIST_DIR}/Lib/ws2812.pio OUTPUT_DIR ${CMAKE_CURRENT_LIST_DIR}/Lib)
-
 pico_add_extra_outputs(BitDogLab_UART_I2C_Display)
+
+
+

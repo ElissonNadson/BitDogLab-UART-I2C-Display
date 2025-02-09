@@ -1,3 +1,8 @@
+#ifndef FONT_H
+#define FONT_H
+
+#include <stdint.h>
+
 // Fontes para A-Z e 0-9. Os caracteres tem 8x8 pixels
 
 static uint8_t font[] = {
@@ -69,3 +74,5 @@ static uint8_t font[] = {
     0x00, 0x4c, 0x50, 0x50, 0x3c, 0x00, 0x00, 0x00, //y
     0x00, 0x44, 0x64, 0x54, 0x4c, 0x44, 0x00, 0x00 //z
 };
+
+#endif
