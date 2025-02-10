@@ -88,7 +88,6 @@ https://youtu.be/klWZOF3K0bk
 🔗 Assista no YouTube: 
 
 [![Versão Editada](https://img.youtube.com/vi/8sewJE6tilU/maxresdefault.jpg)](https://youtu.be/8sewJE6tilU)
-https://img.youtube.com/vi/8sewJE6tilU/maxresdefault.jpg
 https://youtu.be/klWZOF3K0bk
 
 ---
