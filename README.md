@@ -83,7 +83,15 @@ Este projeto implementa comunicação serial utilizando **UART e I2C** no microc
 
 https://youtu.be/klWZOF3K0bk
 
+📌 Este segundo vídeo foi editado com cortes e velocidade aumentada em **x2** para se enquadrar no requisito de **2 minutos**./
+
+🔗 Assista no YouTube: 
+
+[![Versão Editada](https://img.youtube.com/vi/8sewJE6tilU/maxresdefault.jpg)](https://youtu.be/8sewJE6tilU)
+https://img.youtube.com/vi/8sewJE6tilU/maxresdefault.jpg
+https://youtu.be/klWZOF3K0bk
+
 ---
 
-💡 Desenvolvido com ❤️ por **Elisson Nadson** e contribuidores.
+💡 Desenvolvido com ❤️ por **Elisson Nadson** .
 
